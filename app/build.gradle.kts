@@ -1,13 +1,16 @@
 plugins {
     alias(libs.plugins.android.application)
+
+    
+    id("com.google.gms.google-services")  // Plugin para Google Services
 }
 
 android {
-    namespace = "com.example.appchatt"
+    namespace = "com.tuempresa.linguaconnect"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.appchatt"
+        applicationId = "com.tuempresa.linguaconnect"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -45,5 +48,9 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+
+    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
 
 }

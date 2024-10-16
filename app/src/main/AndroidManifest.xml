@@ -14,7 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppChatT"
         android:usesCleartextTraffic="true"
+
+        android:name=".Main"
+
         tools:targetApi="31">
+
         <activity
             android:name=".Activities.SplashActivity"
             android:exported="true">
