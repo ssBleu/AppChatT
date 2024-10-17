@@ -15,7 +15,7 @@
         android:theme="@style/Theme.AppChatT"
         android:usesCleartextTraffic="true"
 
-        android:name=".Main"
+
 
         tools:targetApi="31">
 
