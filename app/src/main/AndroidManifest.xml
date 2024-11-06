@@ -37,7 +37,6 @@
         <activity android:name=".Activities.RegisterActivity" />
         <activity android:name=".Activities.MenuActivity" />
         <activity android:name=".Activities.ContactsActivity" />
-        <activity android:name=".Activities.RecentChatsActivity" />
         <activity android:name=".Activities.ChatActivity" />
     </application>
 
