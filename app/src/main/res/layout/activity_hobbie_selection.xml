@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/activity_language_selection"
+    android:id="@+id/activity_hobbie_selection"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/tvSelectLanguage"
+        android:id="@+id/tvSelectHobbies"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Selecciona un Idioma:"
+        android:text="Selecciona un Hobby:"
         android:textSize="18sp"
         android:layout_marginBottom="16dp" />
 
     <ListView
-        android:id="@+id/listViewLanguages"
+        android:id="@+id/listViewHobbies"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp" />
 
 </LinearLayout>

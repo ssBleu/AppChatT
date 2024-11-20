@@ -10,7 +10,7 @@
         android:id="@+id/tvSelectedLanguage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Usuarios que hablan [Idioma]:"
+        android:text="Usuarios con el hobbie seleccionado:"
         android:textSize="18sp"
         android:layout_marginBottom="16dp" />
 

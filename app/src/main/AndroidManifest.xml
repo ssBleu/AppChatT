@@ -19,7 +19,7 @@
             android:name=".Activities.UserListActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.LanguageSelectionActivity"
+            android:name=".Activities.HobbieSelectionActivity"
             android:exported="false" />
         <activity
             android:name=".Activities.SettingsActivity"

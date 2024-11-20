@@ -9,10 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.tuempresa.linguaconnect.Models.User;
 import com.tuempresa.linguaconnect.R;
-
 import java.util.List;
 
 public class UserAdapter extends ArrayAdapter<User> {
@@ -64,6 +62,7 @@ public class UserAdapter extends ArrayAdapter<User> {
                 return "Japonés";
             case "ko":
                 return "Coreano";
+            // Agrega más casos según los idiomas que soportes
             default:
                 return languageCode; // Retorna el código si no hay una correspondencia
         }
