@@ -1,153 +1,131 @@
-
+// UserListActivity.java
 package com.tuempresa.linguaconnect.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.tuempresa.linguaconnect.Adapters.UserAdapter; // Import correcto
+import com.tuempresa.linguaconnect.Models.User;
 import com.tuempresa.linguaconnect.R;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class UserListActivity extends AppCompatActivity {
 
-    private static final String TAG = "UsersListActivity";
+    private static final String TAG = "UserListActivity";
 
-    private TextView tvSelectedLanguage;
+    private String username;
+    private String selectedLanguage;
+    private String selectedLanguageCode;
+    private String userLanguageCode;
+
     private ListView listViewUsers;
+    private ArrayList<User> usersList;
+    private UserAdapter userAdapter;
 
-    private String username; // Usuario actual
-    private String selectedLanguage; // Idioma seleccionado
-
+    // Firebase Firestore
     private FirebaseFirestore db;
-
-    private List<String> usersList; // Lista de nombres de usuario
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
 
-        // Obtener datos pasados desde LanguageSelectionActivity
+        // Obtener los datos pasados desde LanguageSelectionActivity
         Intent intent = getIntent();
         username = intent.getStringExtra("USERNAME");
         selectedLanguage = intent.getStringExtra("LANGUAGE");
+        selectedLanguageCode = intent.getStringExtra("LANGUAGE_CODE"); // Código de idioma para filtrar
 
-        if (username == null || username.isEmpty() || selectedLanguage == null || selectedLanguage.isEmpty()) {
-            Toast.makeText(this, "Información incompleta", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Username o Language está vacío");
+        if (username == null || username.isEmpty() || selectedLanguageCode == null || selectedLanguageCode.isEmpty()) {
+            Toast.makeText(this, "Información del usuario o idioma no disponible", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "El nombre de usuario o el código de idioma es nulo o está vacío");
             finish();
             return;
         }
 
+        // Inicializar vistas
+        listViewUsers = findViewById(R.id.listViewUsers);
+        usersList = new ArrayList<>();
+        userAdapter = new UserAdapter(this, usersList); // Uso del adaptador personalizado
+        listViewUsers.setAdapter(userAdapter);
+
         // Inicializar Firestore
         db = FirebaseFirestore.getInstance();
 
-        // Inicializar vistas
-        tvSelectedLanguage = findViewById(R.id.tvSelectedLanguage);
-        listViewUsers = findViewById(R.id.listViewUsers);
+        // Obtener el idioma preferido del usuario actual
+        fetchCurrentUserLanguageCode();
+    }
 
-        tvSelectedLanguage.setText("Usuarios que hablan " + selectedLanguage + ":");
-
-        usersList = new ArrayList<>();
-
-        // Configurar el adaptador para el ListView
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, usersList);
-        listViewUsers.setAdapter(adapter);
-
-        // Consultar Firestore para obtener usuarios que hablan el idioma seleccionado
-        db.collection("user_config")
-                .whereEqualTo("preferred_language_code", getLanguageCode(selectedLanguage))
+    private void fetchCurrentUserLanguageCode() {
+        db.collection("users").document(username)
                 .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        for (DocumentSnapshot document : queryDocumentSnapshots) {
-                            Map<String, Object> userConfig = document.getData();
-                            if (userConfig != null) {
-                                String userId = (String) userConfig.get("user_id");
-                                if (userId != null && !userId.equals(username)) { // Excluir al usuario actual
-                                    // Obtener detalles del usuario desde la colección "users"
-                                    db.collection("users").document(userId).get()
-                                            .addOnSuccessListener(userDoc -> {
-                                                if (userDoc.exists()) {
-                                                    String email = userDoc.getString("email");
-                                                    String displayName = userDoc.getString("username");
-                                                    if (displayName != null && email != null) {
-                                                        usersList.add(displayName + " (" + email + ")");
-                                                        adapter.notifyDataSetChanged();
-                                                    }
-                                                }
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                Log.w(TAG, "Error al obtener datos del usuario: " + userId, e);
-                                            });
-                                }
-                            }
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        userLanguageCode = documentSnapshot.getString("preferred_language_code");
+                        if (userLanguageCode == null || userLanguageCode.isEmpty()) {
+                            Toast.makeText(this, "El código de idioma del usuario actual no está disponible", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "userLanguageCode es nulo o está vacío");
+                            finish();
+                            return;
                         }
+
+                        // Ahora cargar los usuarios filtrados por el idioma seleccionado
+                        loadUsersBySelectedLanguage();
                     } else {
-                        Toast.makeText(UserListActivity.this, "No se encontraron usuarios para el idioma seleccionado.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Usuario actual no encontrado", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Documento del usuario actual no existe");
+                        finish();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.w(TAG, "Error al consultar Firestore", e);
-                    Toast.makeText(UserListActivity.this, "Error al cargar usuarios.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Error al obtener el idioma del usuario actual", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error al obtener el idioma del usuario actual", e);
+                    finish();
                 });
-
-// Manejar clic en un usuario para iniciar chat
-        listViewUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                String selectedUserEntry = usersList.get(position);
-                // Extraer el nombre de usuario (suponiendo que el formato es "username (email)")
-                String contactUsername = selectedUserEntry.split(" \\(")[0];
-                Log.d(TAG, "Usuario seleccionado para chatear: " + contactUsername);
-
-                // Iniciar ChatActivity pasando el usuario actual y el contacto
-                Intent chatIntent = new Intent(UserListActivity.this, ChatActivity.class);
-                chatIntent.putExtra("USERNAME", username);
-                chatIntent.putExtra("CONTACT", contactUsername);
-                startActivity(chatIntent);
-                finish();
-            }
-        });
     }
 
-    /**
-     * Mapea el nombre del lenguaje a su código correspondiente.
-     *
-     * @param language Nombre del lenguaje seleccionado.
-     * @return Código del lenguaje.
-     */
-    private String getLanguageCode(String language) {
-        switch (language) {
-            case "Español":
-                return "es";
-            case "Inglés":
-                return "en";
-            case "Francés":
-                return "fr";
-            case "Alemán":
-                return "de";
-            case "Italiano":
-                return "it";
-            case "Portugués":
-                return "pt";
-            // Añade más casos según los idiomas soportados
-            default:
-                return "es";
-        }
+    private void loadUsersBySelectedLanguage() {
+        db.collection("users")
+                .whereEqualTo("preferred_language_code", selectedLanguageCode)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    usersList.clear();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String user = document.getString("username");
+                        String langCode = document.getString("preferred_language_code");
+                        if (user != null && langCode != null && !user.equals(username)) {
+                            usersList.add(new User(user, langCode));
+                        }
+                    }
+                    if (usersList.isEmpty()) {
+                        Toast.makeText(this, "No hay usuarios disponibles para el idioma seleccionado", Toast.LENGTH_SHORT).show();
+                    }
+                    // Actualizar el adaptador
+                    userAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar los usuarios", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error al cargar los usuarios", e);
+                });
+
+        // Manejar clic en un usuario después de cargar la lista
+        listViewUsers.setOnItemClickListener((adapterView, view, position, l) -> {
+            User selectedUser = usersList.get(position);
+            // Iniciar ChatActivity
+            Intent chatIntent = new Intent(UserListActivity.this, ChatActivity.class);
+            chatIntent.putExtra("USERNAME", username);
+            chatIntent.putExtra("CONTACT", selectedUser.getUsername());
+            chatIntent.putExtra("USER_LANGUAGE_CODE", userLanguageCode); // Idioma del usuario actual
+            chatIntent.putExtra("CONTACT_LANGUAGE_CODE", selectedUser.getLanguageCode()); // Idioma del contacto
+            startActivity(chatIntent);
+        });
     }
 }

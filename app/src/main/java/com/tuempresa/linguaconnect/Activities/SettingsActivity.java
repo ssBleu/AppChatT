@@ -1,3 +1,5 @@
+// SettingsActivity.java
+
 package com.tuempresa.linguaconnect.Activities;
 
 import android.os.Bundle;
@@ -21,6 +23,10 @@ public class SettingsActivity extends AppCompatActivity {
     private Button btnSave;
     private String username;
 
+    // Lista de idiomas disponibles con sus códigos
+    private String[] languages = {"Español", "Inglés", "Francés", "Alemán", "Italiano", "Portugués", "Ruso", "Chino", "Japonés", "Coreano"};
+    private String[] languageCodes = {"es", "en", "fr", "de", "it", "pt", "ru", "zh", "ja", "ko"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,37 +47,46 @@ public class SettingsActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
 
         // Configurar el Spinner con opciones de idiomas
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.languages_array, android.R.layout.simple_spinner_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, languages);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLanguage.setAdapter(adapter);
 
         // Obtener la configuración actual del usuario
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("user_config").document(username).get()
+        db.collection("users").document(username).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        String preferredLanguage = documentSnapshot.getString("preferred_language_code");
-                        if (preferredLanguage != null) {
-                            int spinnerPosition = adapter.getPosition(preferredLanguage);
-                            spinnerLanguage.setSelection(spinnerPosition);
+                        String preferredLanguageCode = documentSnapshot.getString("preferred_language_code");
+                        if (preferredLanguageCode != null && !preferredLanguageCode.isEmpty()) {
+                            // Encontrar la posición en el Spinner que corresponde al código de idioma
+                            int spinnerPosition = getSpinnerPosition(preferredLanguageCode);
+                            if (spinnerPosition >= 0) {
+                                spinnerLanguage.setSelection(spinnerPosition);
+                            } else {
+                                Log.w(TAG, "Código de idioma no encontrado en el Spinner: " + preferredLanguageCode);
+                            }
                         }
+                    } else {
+                        Toast.makeText(this, "Usuario no encontrado", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Documento del usuario actual no existe");
                     }
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error al obtener la configuración", Toast.LENGTH_SHORT).show();
-                    Log.w(TAG, "Error getting user_config document", e);
+                    Log.w(TAG, "Error getting user document", e);
                 });
 
         // Manejar clic en el botón de guardar
         btnSave.setOnClickListener(view -> {
-            String selectedLanguage = spinnerLanguage.getSelectedItem().toString();
+            int selectedPosition = spinnerLanguage.getSelectedItemPosition();
+            String selectedLanguage = languages[selectedPosition];
+            String selectedLanguageCode = languageCodes[selectedPosition];
+            Log.d(TAG, "Idioma seleccionado: " + selectedLanguage + " (" + selectedLanguageCode + ")");
 
-            // Mapear el lenguaje seleccionado a un código de idioma
-            String languageCode = mapLanguageToCode(selectedLanguage);
-
-            db.collection("user_config").document(username)
-                    .update("preferred_language_code", languageCode)
+            // Actualizar la configuración en Firestore
+            db.collection("users").document(username)
+                    .update("preferred_language_code", selectedLanguageCode)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Configuración actualizada", Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "Configuración de usuario actualizada");
@@ -79,20 +94,23 @@ public class SettingsActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(this, "Error al actualizar la configuración", Toast.LENGTH_SHORT).show();
-                        Log.w(TAG, "Error updating user_config", e);
+                        Log.w(TAG, "Error updating user document", e);
                     });
         });
     }
 
-    private String mapLanguageToCode(String language) {
-        switch (language) {
-            case "Español":
-                return "es";
-            case "Inglés":
-                return "en";
-            // Añade más casos según los idiomas soportados
-            default:
-                return "es";
+    /**
+     * Encuentra la posición del Spinner que corresponde al código de idioma.
+     *
+     * @param languageCode El código de idioma a buscar.
+     * @return La posición del Spinner o -1 si no se encuentra.
+     */
+    private int getSpinnerPosition(String languageCode) {
+        for (int i = 0; i < languageCodes.length; i++) {
+            if (languageCodes[i].equalsIgnoreCase(languageCode)) {
+                return i;
+            }
         }
+        return -1; // No encontrado
     }
 }

@@ -47,6 +47,12 @@
             android:layout_marginTop="16dp"
             android:layout_gravity="center"/>
 
+        <Spinner
+            android:id="@+id/spinnerLanguage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/languages_array" />
+
         <!-- Botón de Registro -->
         <Button
             android:id="@+id/btnRegister"
@@ -67,6 +73,7 @@
             android:textColor="@android:color/holo_blue_light"
             android:layout_marginTop="16dp"
             android:layout_gravity="center"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

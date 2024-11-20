@@ -5,10 +5,8 @@ package com.tuempresa.linguaconnect.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,24 +17,26 @@ public class LanguageSelectionActivity extends AppCompatActivity {
 
     private static final String TAG = "LanguageSelectionActivity";
 
-    private ListView listViewLanguages;
     private String username;
 
-    // Lista de idiomas disponibles
-    private String[] languages = {"Español", "Inglés", "Francés", "Alemán", "Italiano", "Portugués"};
+    // Lista de idiomas disponibles con sus códigos
+    private String[] languages = {"Español", "Inglés", "Francés", "Alemán", "Italiano", "Portugués", "Ruso", "Chino", "Japonés", "Coreano"};
+    private String[] languageCodes = {"es", "en", "fr", "de", "it", "pt", "ru", "zh", "ja", "ko"};
+
+    private ListView listViewLanguages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_language_selection);
 
-        // Obtener el nombre de usuario pasado desde MenuActivity
+        // Obtener el nombre de usuario pasado desde la actividad anterior
         Intent intent = getIntent();
         username = intent.getStringExtra("USERNAME");
 
         if (username == null || username.isEmpty()) {
             Toast.makeText(this, "Información del usuario no disponible", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Username is null or empty");
+            Log.e(TAG, "El nombre de usuario es nulo o está vacío");
             finish();
             return;
         }
@@ -50,19 +50,17 @@ public class LanguageSelectionActivity extends AppCompatActivity {
         listViewLanguages.setAdapter(adapter);
 
         // Manejar clic en un idioma
-        listViewLanguages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                String selectedLanguage = languages[position];
-                Log.d(TAG, "Idioma seleccionado: " + selectedLanguage);
+        listViewLanguages.setOnItemClickListener((adapterView, view, position, l) -> {
+            String selectedLanguage = languages[position];
+            String selectedLanguageCode = languageCodes[position];
+            Log.d(TAG, "Idioma seleccionado: " + selectedLanguage + " (" + selectedLanguageCode + ")");
 
-                // Iniciar UsersListActivity pasando el idioma seleccionado
-                Intent usersListIntent = new Intent(LanguageSelectionActivity.this, UserListActivity.class);
-                usersListIntent.putExtra("USERNAME", username);
-                usersListIntent.putExtra("LANGUAGE", selectedLanguage);
-                startActivity(usersListIntent);
-                finish();
-            }
+            // Iniciar UserListActivity pasando el idioma seleccionado
+            Intent usersListIntent = new Intent(LanguageSelectionActivity.this, UserListActivity.class);
+            usersListIntent.putExtra("USERNAME", username);
+            usersListIntent.putExtra("LANGUAGE", selectedLanguage);
+            usersListIntent.putExtra("LANGUAGE_CODE", selectedLanguageCode);
+            startActivity(usersListIntent);
         });
     }
 }
