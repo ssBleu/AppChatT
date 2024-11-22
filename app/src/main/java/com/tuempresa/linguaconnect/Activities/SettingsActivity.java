@@ -1,3 +1,4 @@
+// SettingsActivity.java
 package com.tuempresa.linguaconnect.Activities;
 
 import android.os.Bundle;
@@ -23,8 +24,17 @@ public class SettingsActivity extends AppCompatActivity {
 
     private static final String TAG = "SettingsActivity";
 
-    private Spinner spinnerLanguage;
-    private Spinner spinnerHobbies;
+    // Claves para extras
+    public static final String EXTRA_USERNAME = "USERNAME";
+
+    // Claves de Firestore
+    private static final String COLLECTION_USER_CONFIG = "user_config";
+    private static final String FIELD_USER_ID = "user_id";
+    private static final String FIELD_PREFERRED_LANGUAGE_CODE = "preferred_language_code";
+    private static final String FIELD_HOBBIES = "hobbies";
+
+    // Vistas
+    private Spinner spinnerLanguage, spinnerHobbies;
     private ListView listViewHobbies;
     private Button btnSave, btnAddHobby, btnRemoveHobby;
 
@@ -33,12 +43,20 @@ public class SettingsActivity extends AppCompatActivity {
     // Firebase Firestore
     private FirebaseFirestore db;
 
-    // Lista de idiomas disponibles con sus códigos
-    private final String[] languages = {"Español", "Inglés", "Francés", "Alemán", "Italiano", "Portugués", "Ruso", "Chino", "Japonés", "Coreano"};
-    private final String[] languageCodes = {"es", "en", "fr", "de", "it", "pt", "ru", "zh", "ja", "ko"};
-
-    // Lista de hobbies disponibles
-    private final String[] availableHobbies = {"Lectura", "Deportes", "Música", "Cocina", "Viajes", "Fotografía", "Arte", "Tecnología", "Jardinería", "Cine"};
+    // Listas de idiomas y hobbies disponibles
+    private static final String[] LANGUAGES = {
+            "Español", "Inglés", "Francés", "Alemán",
+            "Italiano", "Portugués", "Ruso", "Chino",
+            "Japonés", "Coreano"
+    };
+    private static final String[] LANGUAGE_CODES = {
+            "es", "en", "fr", "de", "it", "pt", "ru", "zh", "ja", "ko"
+    };
+    private static final String[] AVAILABLE_HOBBIES = {
+            "Lectura", "Deportes", "Música", "Cocina",
+            "Viajes", "Fotografía", "Arte", "Tecnología",
+            "Jardinería", "Cine"
+    };
 
     private List<String> userHobbies;
     private ArrayAdapter<String> hobbiesAdapter;
@@ -49,10 +67,10 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         // Obtener el nombre de usuario desde el Intent
-        username = getIntent().getStringExtra("USERNAME");
+        username = getIntent().getStringExtra(EXTRA_USERNAME);
 
-        if (username == null || username.isEmpty()) {
-            Toast.makeText(this, "Información del usuario no disponible", Toast.LENGTH_SHORT).show();
+        if (isStringNullOrEmpty(username)) {
+            showToast("Información del usuario no disponible");
             Log.e(TAG, "Username is null or empty");
             finish();
             return;
@@ -63,76 +81,110 @@ public class SettingsActivity extends AppCompatActivity {
         // Inicializar Firestore
         db = FirebaseFirestore.getInstance();
 
-        // Inicializar vistas
+        // Inicializar vistas y componentes
+        initializeViews();
+
+        // Configurar Spinners
+        setupSpinners();
+
+        // Inicializar lista de hobbies
+        initializeHobbiesList();
+
+        // Obtener la configuración actual del usuario
+        fetchUserConfig();
+
+        // Configurar listeners para los botones
+        setupButtonListeners();
+    }
+
+    /**
+     * Inicializa las vistas y componentes de la interfaz.
+     */
+    private void initializeViews() {
         spinnerLanguage = findViewById(R.id.spinnerLanguage);
         spinnerHobbies = findViewById(R.id.spinnerHobbies);
         listViewHobbies = findViewById(R.id.listViewHobbies);
         btnSave = findViewById(R.id.btnSave);
         btnAddHobby = findViewById(R.id.btnAddHobby);
         btnRemoveHobby = findViewById(R.id.btnRemoveHobby);
+    }
 
-        // Configurar Spinner para selección de idiomas
+    /**
+     * Configura los adaptadores para los Spinners de idiomas y hobbies disponibles.
+     */
+    private void setupSpinners() {
+        // Configurar el Spinner de idiomas
         ArrayAdapter<String> languageAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, languages);
+                android.R.layout.simple_spinner_item, LANGUAGES);
         languageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLanguage.setAdapter(languageAdapter);
 
-        // Configurar Spinner para hobbies
+        // Configurar el Spinner de hobbies disponibles
         ArrayAdapter<String> availableHobbiesAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, availableHobbies);
+                android.R.layout.simple_spinner_item, AVAILABLE_HOBBIES);
         availableHobbiesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerHobbies.setAdapter(availableHobbiesAdapter);
+    }
 
-        // Inicializar lista de hobbies
+    /**
+     * Inicializa la lista de hobbies del usuario y su adaptador.
+     */
+    private void initializeHobbiesList() {
         userHobbies = new ArrayList<>();
         hobbiesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, userHobbies);
         listViewHobbies.setAdapter(hobbiesAdapter);
 
-        // Configurar el ListView para permitir la selección de un solo hobby
-        listViewHobbies.setChoiceMode(ListView.CHOICE_MODE_SINGLE); // Esto permite seleccionar un solo item
+        // Permitir la selección de un solo hobby
+        listViewHobbies.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+    }
 
-        // Obtener la configuración actual del usuario
-        fetchUserConfig();
-
-        // Manejar el clic en el botón de guardar
+    /**
+     * Configura los listeners para los botones de la interfaz.
+     */
+    private void setupButtonListeners() {
+        // Manejar clic en el botón de guardar
         btnSave.setOnClickListener(v -> saveUserConfig());
 
-        // Manejar el clic en el botón de agregar hobby
+        // Manejar clic en el botón de agregar hobby
         btnAddHobby.setOnClickListener(v -> addHobby());
 
-        // Manejar el clic en el botón de eliminar hobby
+        // Manejar clic en el botón de eliminar hobby
         btnRemoveHobby.setOnClickListener(v -> removeHobby());
     }
 
+    /**
+     * Obtiene la configuración actual del usuario desde Firestore.
+     */
     private void fetchUserConfig() {
         Log.d(TAG, "Buscando configuración en Firestore para USERNAME: " + username);
 
-        // Usar una consulta en lugar de buscar directamente por ID
-        db.collection("user_config")
-                .whereEqualTo("user_id", username) // Buscar donde user_id coincida con el username
+        db.collection(COLLECTION_USER_CONFIG)
+                .whereEqualTo(FIELD_USER_ID, username)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     if (!querySnapshot.isEmpty()) {
                         // Obtenemos el primer documento que coincida
-                        for (DocumentSnapshot documentSnapshot : querySnapshot) {
-                            Log.d(TAG, "Documento de configuración encontrado: " + documentSnapshot.getData());
+                        DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
+                        Log.d(TAG, "Documento de configuración encontrado: " + documentSnapshot.getData());
 
-                            String preferredLanguageCode = documentSnapshot.getString("preferred_language_code");
-                            List<String> hobbies = (List<String>) documentSnapshot.get("hobbies");
+                        String preferredLanguageCode = documentSnapshot.getString(FIELD_PREFERRED_LANGUAGE_CODE);
+                        List<String> hobbies = (List<String>) documentSnapshot.get(FIELD_HOBBIES);
 
-                            if (preferredLanguageCode != null) {
-                                int spinnerPosition = getSpinnerPosition(preferredLanguageCode);
+                        if (preferredLanguageCode != null) {
+                            int spinnerPosition = getSpinnerPosition(preferredLanguageCode);
+                            if (spinnerPosition >= 0) {
                                 spinnerLanguage.setSelection(spinnerPosition);
-                            }
-
-                            if (hobbies != null) {
-                                userHobbies.clear();
-                                userHobbies.addAll(hobbies);
-                                hobbiesAdapter.notifyDataSetChanged();
                             } else {
-                                Log.w(TAG, "La lista de hobbies está vacía o es nula");
+                                Log.w(TAG, "Código de idioma no encontrado en la lista de idiomas");
                             }
-                            break; // Solo necesitamos el primer documento
+                        }
+
+                        if (hobbies != null) {
+                            userHobbies.clear();
+                            userHobbies.addAll(hobbies);
+                            hobbiesAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.w(TAG, "La lista de hobbies está vacía o es nula");
                         }
                     } else {
                         Toast.makeText(this, "Configuración del usuario no encontrada en Firestore", Toast.LENGTH_SHORT).show();
@@ -145,35 +197,35 @@ public class SettingsActivity extends AppCompatActivity {
                 });
     }
 
-
-
+    /**
+     * Guarda la configuración actual del usuario en Firestore.
+     */
     private void saveUserConfig() {
-        String selectedLanguageCode = languageCodes[spinnerLanguage.getSelectedItemPosition()];
+        String selectedLanguageCode = LANGUAGE_CODES[spinnerLanguage.getSelectedItemPosition()];
 
-        // Buscar el documento basado en user_id
-        db.collection("user_config")
-                .whereEqualTo("user_id", username)
+        db.collection(COLLECTION_USER_CONFIG)
+                .whereEqualTo(FIELD_USER_ID, username)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     if (!querySnapshot.isEmpty()) {
-                        for (DocumentSnapshot documentSnapshot : querySnapshot) {
-                            // Obtener el ID real del documento
-                            String documentId = documentSnapshot.getId();
-                            Log.d(TAG, "ID del documento para actualización: " + documentId);
+                        DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
+                        String documentId = documentSnapshot.getId();
+                        Log.d(TAG, "ID del documento para actualización: " + documentId);
 
-                            // Actualizar el documento encontrado
-                            db.collection("user_config").document(documentId)
-                                    .update("preferred_language_code", selectedLanguageCode)
-                                    .addOnSuccessListener(aVoid -> {
-                                        Toast.makeText(this, "Idioma actualizado correctamente", Toast.LENGTH_SHORT).show();
-                                        Log.d(TAG, "Idioma preferido actualizado para el usuario");
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(this, "Error al actualizar el idioma", Toast.LENGTH_SHORT).show();
-                                        Log.e(TAG, "Error al actualizar preferred_language_code", e);
-                                    });
-                            break; // Solo necesitamos actualizar el primer documento encontrado
-                        }
+                        // Actualizar el código de idioma preferido
+                        db.collection(COLLECTION_USER_CONFIG).document(documentId)
+                                .update(FIELD_PREFERRED_LANGUAGE_CODE, selectedLanguageCode)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(this, "Idioma actualizado correctamente", Toast.LENGTH_SHORT).show();
+                                    Log.d(TAG, "Idioma preferido actualizado para el usuario");
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Error al actualizar el idioma", Toast.LENGTH_SHORT).show();
+                                    Log.e(TAG, "Error al actualizar preferred_language_code", e);
+                                });
+
+                        // Opcional: actualizar la lista de hobbies si se han realizado cambios
+                        // Este ejemplo asume que la lista de hobbies ya está actualizada en Firestore
                     } else {
                         Toast.makeText(this, "No se encontró configuración para actualizar", Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "No se encontró ningún documento para user_id: " + username);
@@ -185,7 +237,9 @@ public class SettingsActivity extends AppCompatActivity {
                 });
     }
 
-
+    /**
+     * Agrega un hobby seleccionado a la configuración del usuario en Firestore.
+     */
     private void addHobby() {
         String newHobby = spinnerHobbies.getSelectedItem().toString();
 
@@ -194,39 +248,41 @@ public class SettingsActivity extends AppCompatActivity {
             return;
         }
 
-        db.collection("user_config")
-                .whereEqualTo("user_id", username)  // Usamos `user_id` en lugar de `username`
+        db.collection(COLLECTION_USER_CONFIG)
+                .whereEqualTo(FIELD_USER_ID, username)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     if (!querySnapshot.isEmpty()) {
-                        // Obtener el primer documento del `user_config`
                         DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
-                        String documentId = documentSnapshot.getId(); // Obtenemos el ID del documento
+                        String documentId = documentSnapshot.getId();
 
-                        // Ahora actualizamos el campo `hobbies` con el nuevo hobby
-                        db.collection("user_config").document(documentId)
-                                .update("hobbies", FieldValue.arrayUnion(newHobby))
+                        // Agregar el hobby a la lista en Firestore
+                        db.collection(COLLECTION_USER_CONFIG).document(documentId)
+                                .update(FIELD_HOBBIES, FieldValue.arrayUnion(newHobby))
                                 .addOnSuccessListener(aVoid -> {
-                                    userHobbies.add(newHobby); // Actualizamos la lista local
-                                    hobbiesAdapter.notifyDataSetChanged(); // Actualizamos el ListView
+                                    userHobbies.add(newHobby);
+                                    hobbiesAdapter.notifyDataSetChanged();
                                     Toast.makeText(this, "Hobby agregado", Toast.LENGTH_SHORT).show();
+                                    Log.d(TAG, "Hobby agregado: " + newHobby);
                                 })
                                 .addOnFailureListener(e -> {
-                                    Log.e(TAG, "Error al agregar hobby", e);
                                     Toast.makeText(this, "Error al agregar hobby", Toast.LENGTH_SHORT).show();
+                                    Log.e(TAG, "Error al agregar hobby", e);
                                 });
                     } else {
-                        Log.e(TAG, "No se encontró el documento de configuración para el usuario: " + username);
                         Toast.makeText(this, "Error al encontrar configuración del usuario", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "No se encontró el documento de configuración para el usuario: " + username);
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error al obtener el documento de configuración", e);
                     Toast.makeText(this, "Error al obtener el documento de configuración", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error al obtener el documento de configuración", e);
                 });
     }
 
-
+    /**
+     * Elimina un hobby seleccionado de la configuración del usuario en Firestore.
+     */
     private void removeHobby() {
         int selectedPosition = listViewHobbies.getCheckedItemPosition();
 
@@ -237,39 +293,64 @@ public class SettingsActivity extends AppCompatActivity {
 
         String selectedHobby = userHobbies.get(selectedPosition);
 
-        db.collection("user_config")
-                .whereEqualTo("user_id", username) // Usamos `user_id`
+        db.collection(COLLECTION_USER_CONFIG)
+                .whereEqualTo(FIELD_USER_ID, username)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     if (!querySnapshot.isEmpty()) {
                         DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
-                        String documentId = documentSnapshot.getId(); // Obtenemos el ID del documento
+                        String documentId = documentSnapshot.getId();
 
-                        // Ahora eliminamos el hobby de la lista
-                        db.collection("user_config").document(documentId)
-                                .update("hobbies", FieldValue.arrayRemove(selectedHobby))
+                        // Eliminar el hobby de la lista en Firestore
+                        db.collection(COLLECTION_USER_CONFIG).document(documentId)
+                                .update(FIELD_HOBBIES, FieldValue.arrayRemove(selectedHobby))
                                 .addOnSuccessListener(aVoid -> {
-                                    userHobbies.remove(selectedHobby); // Eliminamos el hobby localmente
-                                    hobbiesAdapter.notifyDataSetChanged(); // Actualizamos el ListView
+                                    userHobbies.remove(selectedHobby);
+                                    hobbiesAdapter.notifyDataSetChanged();
                                     Toast.makeText(this, "Hobby eliminado", Toast.LENGTH_SHORT).show();
+                                    Log.d(TAG, "Hobby eliminado: " + selectedHobby);
                                 })
                                 .addOnFailureListener(e -> {
-                                    Log.e(TAG, "Error al eliminar hobby", e);
                                     Toast.makeText(this, "Error al eliminar hobby", Toast.LENGTH_SHORT).show();
+                                    Log.e(TAG, "Error al eliminar hobby", e);
                                 });
                     } else {
-                        Log.e(TAG, "No se encontró el documento de configuración para el usuario: " + username);
                         Toast.makeText(this, "Error al encontrar configuración del usuario", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "No se encontró el documento de configuración para el usuario: " + username);
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error al obtener el documento de configuración", e);
                     Toast.makeText(this, "Error al obtener el documento de configuración", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error al obtener el documento de configuración", e);
                 });
     }
 
-
+    /**
+     * Obtiene la posición del Spinner correspondiente al código de idioma proporcionado.
+     *
+     * @param languageCode El código de idioma.
+     * @return La posición en el Spinner, o -1 si no se encuentra.
+     */
     private int getSpinnerPosition(String languageCode) {
-        return Arrays.asList(languageCodes).indexOf(languageCode);
+        return Arrays.asList(LANGUAGE_CODES).indexOf(languageCode);
+    }
+
+    /**
+     * Verifica si una cadena es nula o está vacía.
+     *
+     * @param str La cadena a verificar.
+     * @return true si la cadena es nula o está vacía, false de lo contrario.
+     */
+    private boolean isStringNullOrEmpty(String str) {
+        return str == null || str.trim().isEmpty();
+    }
+
+    /**
+     * Muestra un Toast con el mensaje proporcionado.
+     *
+     * @param message Mensaje a mostrar.
+     */
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

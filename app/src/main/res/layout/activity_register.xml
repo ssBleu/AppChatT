@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activities.RegisterActivity">
@@ -24,7 +25,7 @@
 
         <!-- Campo de Email -->
         <EditText
-            android:id="@+id/etRegisterEmail"
+            android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
@@ -33,7 +34,7 @@
 
         <!-- Campo de Contraseña -->
         <EditText
-            android:id="@+id/etRegisterPassword"
+            android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Contraseña"
@@ -42,6 +43,7 @@
 
         <!-- Spinner para Selección de Idioma -->
         <TextView
+            android:id="@+id/tvSelectLanguage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Selecciona tu idioma preferido:"
@@ -57,6 +59,7 @@
 
         <!-- Spinner para Selección de Hobby -->
         <TextView
+            android:id="@+id/tvSelectHobby"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Selecciona un hobby:"

@@ -19,4 +19,11 @@
     <color name="color08">#673AB7</color>
     <color name="color09">#F84242</color>
     <color name="color10">#FF0000</color>
+
+    <color name="bg_message_received">#7AEAD0</color>
+    <color name="bg_message_sent">#899793</color>
+
+
+
+
 </resources>
