@@ -6,13 +6,14 @@ import com.tuempresa.linguaconnect.Constants; // Importar la clase de constantes
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.tuempresa.linguaconnect.Adapters.UserAdapter;
+import com.tuempresa.linguaconnect.UserAdapter;
 import com.tuempresa.linguaconnect.Models.User;
 import com.tuempresa.linguaconnect.R;
 
@@ -28,14 +29,6 @@ import java.util.List;
 public class UserListActivity extends AppCompatActivity {
 
     private static final String TAG = "UserListActivity";
-
-    // Claves para extras (Usar las de Constants para consistencia)
-    // No es necesario redefinirlas aquí si ya se usan desde Constants
-    // public static final String EXTRA_USERNAME = "USERNAME";
-    // public static final String EXTRA_LANGUAGE = "LANGUAGE";
-    // public static final String EXTRA_LANGUAGE_CODE = "LANGUAGE_CODE";
-    // public static final String EXTRA_SELECTED_HOBBY = "SELECTED_HOBBY";
-    // public static final String EXTRA_CONTACT_LANGUAGE_CODE = "CONTACT_LANGUAGE_CODE";
 
     // Claves de Firestore
     private static final String COLLECTION_USER_CONFIG = "user_config";
@@ -81,6 +74,10 @@ public class UserListActivity extends AppCompatActivity {
 
         // Configurar listener para los clics en la lista de usuarios
         setupUserListClickListener();
+
+
+        // Configurar listener para el botón de regreso
+        setupBackButtonListener();
     }
 
     /**
@@ -199,6 +196,17 @@ public class UserListActivity extends AppCompatActivity {
         startActivity(chatIntent);
         Log.d(TAG, "Iniciando chat con: " + selectedUser.getUsername() +
                 " (User Lang: " + selectedLanguageCode + ", Contact Lang: " + selectedUser.getLanguageCode() + ")");
+    }
+
+    /**
+     * botón de regreso.
+     */
+    private void setupBackButtonListener() {
+        ImageButton backButton = findViewById(R.id.btnBack);
+        backButton.setOnClickListener(v -> {
+            // Cerrar la actividad actual y volver a la anterior
+            finish();
+        });
     }
 
     /**

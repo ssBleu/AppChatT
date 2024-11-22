@@ -1,25 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_hobbie_selection"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#F4F4F4">
 
-    <TextView
-        android:id="@+id/tvSelectHobbies"
-        android:layout_width="wrap_content"
+    <!-- Barra de herramientas con fondo azul -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Selecciona un Hobby:"
-        android:textSize="18sp"
-        android:layout_marginBottom="16dp" />
+        android:background="@color/bg_bar"
+        android:elevation="4dp"
+        android:padding="8dp">
 
+        <!-- Botón de Regresar (Icono) -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_back_arrow"
+            android:contentDescription="Regresar"
+            android:background="?android:attr/selectableItemBackground"
+            app:tint="#FFFFFF" />
+
+        <!-- Título centrado -->
+        <TextView
+            android:id="@+id/tvSelectHobbies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selecciona un Hobby"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif-medium" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- División decorativa -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DADADA"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Lista de hobbies con diseño mejorado -->
     <ListView
         android:id="@+id/listViewHobbies"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp" />
+        android:divider="#C4C4C4"
+        android:dividerHeight="1dp"
+        android:background="#FFFFFF"
+        android:elevation="2dp"
+        android:padding="8dp" />
 
 </LinearLayout>

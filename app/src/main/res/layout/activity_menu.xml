@@ -27,7 +27,7 @@
         android:text="Bienvenido a LinguaConnect!"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="@color/my_text_primary"
+        android:textColor="@color/my_text_menu"
         android:layout_marginTop="16dp" />
 
     <TextView
@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Explora tus chats y conéctate con personas de todo el mundo, sin barreras de idioma."
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textColor="@color/my_text_secondary"
         android:layout_marginTop="8dp"
         android:gravity="center" />
@@ -45,7 +45,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Explorar usuarios"
-        android:backgroundTint="@color/color05"
+        android:backgroundTint="@color/color02"
+        android:textStyle="bold"
+        android:textSize="18dp"
         android:layout_marginTop="24dp" />
 
     <Button
@@ -53,7 +55,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Contactos"
-        android:backgroundTint="@color/color07"
+        android:textStyle="bold"
+        android:textSize="18dp"
+        android:backgroundTint="@color/color06"
         android:layout_marginTop="16dp" />
 
     <Button
@@ -61,6 +65,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Configuración"
+        android:textStyle="bold"
+        android:textSize="18dp"
         android:backgroundTint="@color/color03"
         android:layout_marginTop="16dp" />
   </LinearLayout>

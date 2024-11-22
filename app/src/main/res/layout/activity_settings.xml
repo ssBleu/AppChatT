@@ -5,7 +5,8 @@
     android:id="@+id/mainScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.SettingsActivity">
+    tools:context=".Activities.SettingsActivity"
+    android:background="#F4F4F4">
 
     <LinearLayout
         android:id="@+id/llMainContent"
@@ -14,33 +15,54 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Título de la Actividad -->
-        <TextView
-            android:id="@+id/tvSettingsTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Configuración de Usuario"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_gravity="center_horizontal"
-            android:paddingBottom="24dp" />
+        <!-- Barra de Herramientas (Toolbar) con ícono de regresar -->
 
         <!-- Etiqueta para el Spinner de Idiomas -->
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bg_bar"
+            android:elevation="4dp">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="start|center_vertical"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Regresar"
+                android:src="@drawable/ic_back_arrow" />
+
+            <TextView
+                android:id="@+id/tvSettingsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Configuración de Usuario"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </androidx.appcompat.widget.Toolbar>
+
         <TextView
             android:id="@+id/tvSelectLanguage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Selecciona tu idioma preferido:"
             android:textSize="16sp"
-            android:paddingBottom="8dp" />
+            android:paddingBottom="8dp"
+            android:textColor="#555555" />
 
         <!-- Spinner para Selección de Idioma -->
         <Spinner
             android:id="@+id/spinnerLanguage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:spinnerMode="dropdown"
-            android:paddingBottom="16dp" />
+            android:padding="12dp"
+            android:layout_marginBottom="16dp" />
 
         <!-- Sección de Hobbies -->
         <TextView
@@ -49,14 +71,15 @@
             android:layout_height="wrap_content"
             android:text="Selecciona un hobby para agregar:"
             android:textSize="16sp"
-            android:paddingBottom="8dp" />
+            android:paddingBottom="8dp"
+            android:textColor="#555555" />
 
         <Spinner
             android:id="@+id/spinnerHobbies"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:spinnerMode="dropdown"
-            android:paddingBottom="16dp" />
+            android:padding="12dp"
+            android:layout_marginBottom="16dp" />
 
         <TextView
             android:id="@+id/tvCurrentHobbies"
@@ -64,23 +87,25 @@
             android:layout_height="wrap_content"
             android:text="Hobbies actuales:"
             android:textSize="16sp"
-            android:paddingBottom="8dp" />
+            android:paddingBottom="8dp"
+            android:textColor="#555555" />
 
         <ListView
             android:id="@+id/listViewHobbies"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="@android:color/white"
-            android:divider="@android:color/darker_gray"
+            android:background="#FFFFFF"
+            android:divider="#CCCCCC"
             android:dividerHeight="1dp"
             android:padding="8dp"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            android:elevation="2dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="16dp">
 
             <!-- Botón para Agregar Hobby -->
             <Button
@@ -89,9 +114,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Agregar"
-                android:backgroundTint="@color/my_primary"
+                android:backgroundTint="#4CAF50"
                 android:textColor="@android:color/white"
-                android:padding="12dp" />
+                android:padding="12dp"
+                android:elevation="2dp" />
 
             <!-- Botón para Eliminar Hobby -->
             <Button
@@ -100,10 +126,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Eliminar"
-                android:backgroundTint="@color/my_secondary"
+                android:backgroundTint="#F44336"
                 android:textColor="@android:color/white"
                 android:padding="12dp"
-                android:layout_marginStart="8dp" />
+                android:layout_marginStart="8dp"
+                android:elevation="2dp" />
         </LinearLayout>
 
         <!-- Botón para Guardar la Configuración -->
@@ -112,9 +139,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Guardar"
-            android:backgroundTint="@color/my_secondary"
+            android:backgroundTint="#2196F3"
             android:textColor="@android:color/white"
             android:padding="12dp"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:elevation="3dp" />
     </LinearLayout>
 </ScrollView>

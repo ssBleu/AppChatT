@@ -25,6 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Login"
+            android:textColor="@color/my_LogReg"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_gravity="center"/>
@@ -66,7 +67,7 @@
             android:layout_height="wrap_content"
             android:text="¿No tienes una cuenta? Regístrate"
             android:textSize="14sp"
-            android:textColor="@android:color/holo_blue_light"
+            android:textColor="@color/my_secondary"
             android:layout_marginTop="16dp"
             android:layout_gravity="center"/>
     </LinearLayout>

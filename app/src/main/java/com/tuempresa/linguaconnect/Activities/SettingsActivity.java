@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -53,9 +54,9 @@ public class SettingsActivity extends AppCompatActivity {
             "es", "en", "fr", "de", "it", "pt", "ru", "zh", "ja", "ko"
     };
     private static final String[] AVAILABLE_HOBBIES = {
-            "Lectura", "Deportes", "Música", "Cocina",
-            "Viajes", "Fotografía", "Arte", "Tecnología",
-            "Jardinería", "Cine"
+            "lectura", "deportes", "música", "cocina",
+            "viajes", "fotografía", "arte", "tecnología",
+            "jardinería", "cine"
     };
 
     private List<String> userHobbies;
@@ -65,6 +66,8 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+
 
         // Obtener el nombre de usuario desde el Intent
         username = getIntent().getStringExtra(EXTRA_USERNAME);
@@ -95,6 +98,13 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Configurar listeners para los botones
         setupButtonListeners();
+
+        // Configurar el botón de regreso
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> {
+            // Finaliza la actividad actual y regresa a la anterior
+            onBackPressed();
+        });
     }
 
     /**

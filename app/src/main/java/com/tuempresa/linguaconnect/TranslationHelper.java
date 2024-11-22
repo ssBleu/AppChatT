@@ -2,8 +2,6 @@ package com.tuempresa.linguaconnect;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
-
 import java.io.IOException;
 import java.net.URLEncoder;
 

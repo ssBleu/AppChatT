@@ -1,47 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_chat"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:background="#F5F5F5"
     tools:context=".Activities.ChatActivity">
 
     <!-- Barra de Título con el Nombre del Contacto y el Botón de Agregar Contacto -->
+
+    <!-- RecyclerView para los Mensajes -->
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true">
+        android:background="@color/bg_bar"
+        android:elevation="4dp"
+        android:padding="12dp">
 
         <TextView
             android:id="@+id/tvChatWith"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:text="Chat con [Usuario]"
+            android:textColor="#FFFFFF"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_centerVertical="true"/>
+            android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/btnAddContact"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/add_contact"
-            android:contentDescription="Agregar Contacto"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Agregar Contacto"
+            android:src="@drawable/add_contact" />
     </RelativeLayout>
 
-    <!-- RecyclerView para los Mensajes -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_below="@id/header"
         android:layout_above="@id/messageInputLayout"
-        android:scrollbars="vertical"/>
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:layout_margin="0dp"
+        android:background="#FFFFFF"
+        android:scrollbars="vertical" />
 
     <!-- Layout para Ingresar y Enviar Mensajes -->
     <LinearLayout
@@ -49,20 +59,28 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:padding="8dp"
+        android:background="#FFFFFF"
+        android:elevation="2dp">
 
         <EditText
             android:id="@+id/etMessage"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:hint="Escribe un mensaje" />
+            android:hint="Escribe un mensaje"
+            android:padding="12dp"
+            android:textColor="#333333"
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/btnSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enviar" />
+            android:text="Enviar"
+            android:textColor="#FFFFFF"
+            android:padding="12dp" />
     </LinearLayout>
 
 </RelativeLayout>

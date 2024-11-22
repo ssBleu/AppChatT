@@ -1,5 +1,5 @@
 // UserAdapter.java
-package com.tuempresa.linguaconnect.Adapters;
+package com.tuempresa.linguaconnect;
 
 import android.content.Context;
 import android.view.LayoutInflater;

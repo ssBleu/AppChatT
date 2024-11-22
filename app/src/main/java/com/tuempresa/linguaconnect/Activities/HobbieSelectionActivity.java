@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.tuempresa.linguaconnect.HobbyAdapter;
 import com.tuempresa.linguaconnect.R;
 
 public class HobbieSelectionActivity extends AppCompatActivity {
@@ -32,8 +34,14 @@ public class HobbieSelectionActivity extends AppCompatActivity {
 
     // Lista de hobbies disponibles
     private static final String[] HOBBIES = {
-            "Lectura", "Deportes", "Música", "Cocina", "Viajes",
-            "Fotografía", "Arte", "Tecnología", "Jardinería", "Cine"
+            "lectura", "deportes", "música", "cocina", "viajes",
+            "fotografía", "arte", "tecnología", "jardinería", "cine"
+    };
+
+
+    private static final int[] HOBBY_IMAGES = {
+            R.drawable.lectura, R.drawable.deportes, R.drawable.musica, R.drawable.cocina, R.drawable.viajes,
+            R.drawable.fotografia, R.drawable.arte, R.drawable.tecnologia, R.drawable.jardineria, R.drawable.cine
     };
 
     // Firebase Firestore
@@ -46,6 +54,18 @@ public class HobbieSelectionActivity extends AppCompatActivity {
 
         // Inicializar Firestore
         db = FirebaseFirestore.getInstance();
+
+        // Inicializar vistas
+        listViewHobbies = findViewById(R.id.listViewHobbies);
+
+        // Configurar el botón de regresar
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(view -> onBackPressed()); // Esto ejecuta el comportamiento de regresar
+
+        listViewHobbies.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedHobby = HOBBIES[position].toLowerCase();
+            Toast.makeText(HobbieSelectionActivity.this, "Hobby seleccionado: " + selectedHobby, Toast.LENGTH_SHORT).show();
+        });
 
         // Obtener y validar extras
         if (!initializeExtras()) {
@@ -147,8 +167,7 @@ public class HobbieSelectionActivity extends AppCompatActivity {
      * Configura el ListView con los hobbies disponibles y sus listeners.
      */
     private void setupHobbiesListView() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, HOBBIES);
+        HobbyAdapter adapter = new HobbyAdapter(this, HOBBIES, HOBBY_IMAGES);
         listViewHobbies.setAdapter(adapter);
         listViewHobbies.setChoiceMode(ListView.CHOICE_MODE_NONE);
 

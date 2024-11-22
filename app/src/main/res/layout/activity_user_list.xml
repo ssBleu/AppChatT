@@ -1,20 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_user_list"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="#F9F9F9">
 
-    <!-- Título de la Actividad -->
-    <TextView
-        android:id="@+id/tvSelectedLanguage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Usuarios con el hobby seleccionado:"
-        android:textSize="18sp"
-        android:layout_marginBottom="16dp" />
+    <!-- Barra de encabezado con el botón de regreso -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/bg_bar"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <!-- Botón de regreso -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_back_arrow"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Regresar"
+            app:tint="#FFFFFF" />
+
+        <!-- Título de la actividad -->
+        <TextView
+            android:id="@+id/tvSelectedLanguage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Usuarios con el hobby seleccionado"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Línea divisoria -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp" />
 
     <!-- Lista de Usuarios -->
     <ListView
@@ -22,8 +55,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:divider="@android:color/darker_gray"
+        android:divider="#CCCCCC"
         android:dividerHeight="1dp"
+        android:background="#FFFFFF"
+        android:elevation="2dp"
         android:padding="8dp"
         android:scrollbars="vertical" />
 
