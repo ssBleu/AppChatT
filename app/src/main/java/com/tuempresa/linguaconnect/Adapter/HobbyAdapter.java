@@ -1,4 +1,4 @@
-package com.tuempresa.linguaconnect;
+package com.tuempresa.linguaconnect.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ArrayAdapter;
+
+import com.tuempresa.linguaconnect.R;
 
 public class HobbyAdapter extends ArrayAdapter<String> {
 

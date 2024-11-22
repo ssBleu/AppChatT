@@ -1,5 +1,5 @@
 // Constants.java
-package com.tuempresa.linguaconnect;
+package com.tuempresa.linguaconnect.Helpers;
 
 public class Constants {
     public static final String EXTRA_USERNAME = "USERNAME";
@@ -8,5 +8,4 @@ public class Constants {
     public static final String EXTRA_CONTACT_LANGUAGE_CODE = "CONTACT_LANGUAGE_CODE";
     public static final String EXTRA_SELECTED_HOBBY = "SELECTED_HOBBY";
     public static final String EXTRA_LANGUAGE = "LANGUAGE";
-    // Agrega más constantes según sea necesario
 }

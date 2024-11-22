@@ -1,4 +1,4 @@
-package com.tuempresa.linguaconnect;
+package com.tuempresa.linguaconnect.Helpers;
 
 import android.content.Context;
 import android.util.Log;

@@ -2,12 +2,11 @@
 
 package com.tuempresa.linguaconnect.Activities;
 
-import com.tuempresa.linguaconnect.Constants; // Importar la clase de constantes
+import com.tuempresa.linguaconnect.Helpers.Constants; // Importar la clase de constantes
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -16,8 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.tuempresa.linguaconnect.HobbyAdapter;
+import com.tuempresa.linguaconnect.Adapter.HobbyAdapter;
 import com.tuempresa.linguaconnect.R;
 
 public class HobbieSelectionActivity extends AppCompatActivity {
@@ -60,7 +58,7 @@ public class HobbieSelectionActivity extends AppCompatActivity {
 
         // Configurar el botón de regresar
         ImageButton btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(view -> onBackPressed()); // Esto ejecuta el comportamiento de regresar
+        btnBack.setOnClickListener(view -> onBackPressed());
 
         listViewHobbies.setOnItemClickListener((parent, view, position, id) -> {
             String selectedHobby = HOBBIES[position].toLowerCase();

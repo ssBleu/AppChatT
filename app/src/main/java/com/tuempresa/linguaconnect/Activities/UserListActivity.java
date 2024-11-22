@@ -1,7 +1,7 @@
 // UserListActivity.java
 package com.tuempresa.linguaconnect.Activities;
 
-import com.tuempresa.linguaconnect.Constants; // Importar la clase de constantes
+import com.tuempresa.linguaconnect.Helpers.Constants; // Importar la clase de constantes
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.tuempresa.linguaconnect.UserAdapter;
+import com.tuempresa.linguaconnect.Adapter.UserAdapter;
 import com.tuempresa.linguaconnect.Models.User;
 import com.tuempresa.linguaconnect.R;
 
