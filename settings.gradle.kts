@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "AppChatT"
+rootProject.name = "LinguaConnect"
 include(":app")
  

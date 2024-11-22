@@ -1,11 +1,10 @@
 <resources>
-    <string name="app_name">AppChatT</string>
+    <string name="app_name">LinguaConnect</string>
     <string-array name="languages_array">
         <item>Español</item>
         <item>Inglés</item>
         <item>Francés</item>
         <item>Alemán</item>
-
     </string-array>
 </resources>
 
